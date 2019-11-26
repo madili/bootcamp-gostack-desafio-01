@@ -15,9 +15,10 @@ function checkProjectExists(req, res, next) {
     let { id } = req.params;
     if (id){
         let project = projects.find(f => f.id == id);
-        if (project) req.project = project;
-
-        return next();
+        if (project) {
+            req.project = project;
+            return next();
+        }            
     }
     
     return res.status(404).json({ error: 'Project not found.'});
@@ -62,7 +63,8 @@ server.post('/projects/:id/tasks', checkProjectExists, (req, res) => {
 });
 
 server.delete('/projects/:id', checkProjectExists, (req, res) => {
-    projects.pop(req.project);
+    let index = projects.findIndex(f => f.id == req.project.id)
+    projects.splice(index, 1);
 
     return res.send();
 });
